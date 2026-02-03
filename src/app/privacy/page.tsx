@@ -9,7 +9,7 @@ export type PrivacyConfig = {
 };
 
 export const PRIVACY_CONFIG: PrivacyConfig = {
-  operators: ['«Буржуй»'],
+  operators: ['ООО «Империя»'],
   siteUrl: "https://burzhui73.ru",
   privacyUrl: "https://burzhui73.ru/privacy",
   email: "burzhuy73@mail.ru",

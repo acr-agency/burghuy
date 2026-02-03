@@ -132,7 +132,7 @@ button {
   cursor: pointer;
 }
 
-.link::after {
+.link::after { 
   content: "";
   position: absolute;
   left: 0;

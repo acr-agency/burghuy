@@ -122,4 +122,19 @@
   &__devLabel {
     color: rgba(237, 237, 237, 0.6);
   }
+
+  .acr {
+    display: block;
+    height: 60px;
+    width: auto;
+
+
+    .ACRStrel{
+      fill: #f7e579;
+    }
+
+    .ACRBukvi {
+      fill: #fff;
+    }
+  }
 }

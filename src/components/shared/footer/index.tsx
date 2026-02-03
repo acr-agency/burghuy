@@ -15,7 +15,7 @@ export default function Footer() {
         </Link>
 
         <p className="footer__copyright">
-          ©2025 <span className="footer__brand">Буржуй</span>. Все права защищены
+          ©2025 <span className="footer__brand">000 «Империя»</span>. Все права защищены
         </p>
       </div>
 
@@ -37,9 +37,8 @@ export default function Footer() {
           </div>
 
           <div className="footer__dev">
-            <span className="footer__devLabel">Разработка:</span>{" "}
             <a className="footer__link" href="https://acr-agency.ru/" target="_blank" rel="noreferrer">
-              АЦР
+             <Image className="acr" src={'/img/ACR.svg'} alt="аналитический центр развитие" width={120} height={60}/>
             </a>
           </div>
         </div>
