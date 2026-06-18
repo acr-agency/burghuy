@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-     "build": "npm install typescript @types/node --no-save && next build",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@vkontakte/vk-bridge": "^2.15.11",
+    "framer-motion": "^12.34.0",
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",

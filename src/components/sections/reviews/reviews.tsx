@@ -5,6 +5,7 @@ import "./style.scss";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, A11y, Mousewheel } from "swiper/modules";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -21,8 +22,9 @@ const isApiErr = (v: unknown): v is ApiErr =>
   v !== null &&
   "error" in v &&
   typeof (v as any).error === "string";
+const Reviews: React.FC = () => {
+const reduceMotion = useReducedMotion();
 
- const Reviews: React.FC = () => {
   const slides = useMemo<Slide[]>(
     () => [
       {
@@ -166,7 +168,14 @@ const isApiErr = (v: unknown): v is ApiErr =>
           >
             {slides.map((s, idx) => (
               <SwiperSlide key={idx}>
-                <article className="reviews_card">
+                <motion.article
+                  className="reviews_card"
+                  initial={reduceMotion ? { opacity: 0 } : { opacity: 0, y: 12, filter: "blur(8px)" }}
+                  whileInView={reduceMotion ? { opacity: 1 } : { opacity: 1, y: 0, filter: "blur(0px)" }}
+                  viewport={{ once: true, amount: 0.25 }}
+                  transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+                  whileHover={reduceMotion ? undefined : { y: -2 }}
+                >
                   <div className="reviews_card_top">
                     <div>
                       <div className="reviews_name">{s.name}</div>
@@ -176,8 +185,9 @@ const isApiErr = (v: unknown): v is ApiErr =>
                   </div>
 
                   <p className="reviews_text">{s.text}</p>
-                </article>
+                </motion.article>
               </SwiperSlide>
+
             ))}
           </Swiper>
 
@@ -195,58 +205,82 @@ const isApiErr = (v: unknown): v is ApiErr =>
         </div>
       </div>
 
-      {open && (
-        <div className="reviews_modal" role="dialog" aria-modal="true">
-          <button
-            className="reviews_modal_backdrop"
-            onClick={closeModal}
-            aria-label="Закрыть"
+      <AnimatePresence>
+  {open && (
+    <motion.div
+      className="reviews_modal"
+      role="dialog"
+      aria-modal="true"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onMouseDown={(e) => e.target === e.currentTarget && closeModal()}
+    >
+      <button
+        className="reviews_modal_backdrop"
+        onClick={closeModal}
+        aria-label="Закрыть"
+      />
+
+      <motion.div
+        className="reviews_modal_card"
+        initial={
+          reduceMotion
+            ? { opacity: 0 }
+            : { opacity: 0, y: 16, scale: 0.985, filter: "blur(10px)" }
+        }
+        animate={
+          reduceMotion
+            ? { opacity: 1 }
+            : { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }
+        }
+        exit={
+          reduceMotion
+            ? { opacity: 0 }
+            : { opacity: 0, y: 10, scale: 0.99, filter: "blur(8px)" }
+        }
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
+        onMouseDown={(e) => e.stopPropagation()}
+      >
+        <div className="reviews_modal_head">
+          <div className="reviews_modal_title">ОСТАВИТЬ ОТЗЫВ</div>
+          <button className="reviews_modal_close" onClick={closeModal} aria-label="Закрыть">
+            ✕
+          </button>
+        </div>
+
+        <form className="reviews_modal_body" onSubmit={submit}>
+          <input
+            className="reviews_input"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Ваше имя"
+            maxLength={60}
           />
 
-          <div className="reviews_modal_card">
-            <div className="reviews_modal_head">
-              <div className="reviews_modal_title">ОСТАВИТЬ ОТЗЫВ</div>
-              <button
-                className="reviews_modal_close"
-                onClick={closeModal}
-                aria-label="Закрыть"
-              >
-                ✕
-              </button>
+          <textarea
+            className="reviews_textarea"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Напишите что вам понравилось..."
+            maxLength={1200}
+          />
+
+          {status.msg && (
+            <div className={`reviews_status ${status.type === "success" ? "ok" : "err"}`}>
+              {status.msg}
             </div>
+          )}
 
-            <form className="reviews_modal_body" onSubmit={submit}>
-              <input
-                className="reviews_input"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Ваше имя"
-                maxLength={60}
-              />
+          <button className="butT1" type="submit" disabled={sending}>
+            {sending ? "ОТПРАВКА..." : "РАЗМЕСТИТЬ"}
+          </button>
+        </form>
+      </motion.div>
+    </motion.div>
+  )}
+</AnimatePresence>
 
-              <textarea
-                className="reviews_textarea"
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                placeholder="Напишите что вам понравилось..."
-                maxLength={1200}
-              />
-
-              {status.msg && (
-                <div
-                  className={`reviews_status ${status.type === "success" ? "ok" : "err"}`}
-                >
-                  {status.msg}
-                </div>
-              )}
-
-              <button className="butT1" type="submit" disabled={sending}>
-                {sending ? "ОТПРАВКА..." : "РАЗМЕСТИТЬ"}
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
     </section>
   );
 };

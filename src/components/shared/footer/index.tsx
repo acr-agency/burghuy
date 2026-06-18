@@ -4,9 +4,19 @@ import Image from "next/image";
 import Link from "next/link";
 import "./style.scss";
 
-import { CookieConsent, openCookieSettings } from "@/components/features/CookieConsent/CookieConsent";
+import { openCookieSettings } from "@/components/features/CookieConsent/CookieConsent"; // ✅ Только функцию
+import { useCallback } from "react";
 
 export default function Footer() {
+
+    const handleOpenSettings = useCallback(() => {
+    console.log('[Footer] Opening cookie settings'); // 🔍 Проверяем
+    try {
+      openCookieSettings();
+    } catch (error) {
+      console.error('[Footer] Error opening settings:', error);
+    }
+  }, []);
   return (
     <footer className="footer">
       <div className="container footer__top">
@@ -27,10 +37,11 @@ export default function Footer() {
               Политика конфиденциальности
             </Link>
 
-            <button
+         <button
               type="button"
               className="footer__link footer__linkBtn"
-              onClick={openCookieSettings}
+              onClick={handleOpenSettings} // ✅ Используем обернутую функцию
+              data-testid="footer-cookie-settings" // ✅ Добавляем testid
             >
               Настройки cookies
             </button>
@@ -44,8 +55,7 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Сам баннер cookies оставь внизу футера — нормально */}
-      <CookieConsent policyUrl="/privacy" siteName="Буржуй" />
+      {/* ✅ Убираем CookieConsent отсюда - он уже в RootLayout */}
     </footer>
   );
 }

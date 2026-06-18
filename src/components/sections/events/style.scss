@@ -572,12 +572,7 @@
   .events {
     padding: 55px 0;
 
-    .h2 {
-      margin-left: 0;
-      padding: 8px 16px;
-      font-size: 16px;
-      border-radius: 28px;
-    }
+
 
     &_grid {
       margin-top: 18px;
@@ -651,5 +646,106 @@
   .eventPop {
     &_title { font-size: 20px; }
     &_count { font-size: 15px; }
+  }
+
+  .evetnMenu{
+    flex-direction: column-reverse;
+    gap: 15px;
+  }
+}
+
+
+.conditionsPop {
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  &__tabs {
+    display: flex;
+    gap: 8px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px;
+    border-radius: 10px;
+  }
+
+  &__tab {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    border-radius: 60px;
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.2s;
+
+    &.is-active {
+      color: #fff;
+    }
+  }
+
+  &__radio {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transition: all 0.2s;
+
+    &.is-on {
+      background: #ffd700;
+      box-shadow: 0 0 6px #ffd700;
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  &__tabGlow {
+     position: absolute;
+  inset: -1px; /* чуть шире, чтобы “сливалось” с краями */
+  pointer-events: none;
+  border-radius: 10px;
+
+  background:
+    radial-gradient(120% 140% at 18% 0%,
+      rgba(247, 229, 121, 0.20),
+      rgba(247, 229, 121, 0.00) 60%),
+    linear-gradient(90deg,
+      rgba(247, 229, 121, 0.10),
+      rgba(223, 147, 57, 0.10));
+
+  /* тонкая внутренняя линия */
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.10),
+    0 10px 26px rgba(0, 0, 0, 0.22);
+  }
+
+  &__close {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+    width: 40px !important;
+    height: 40px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 28px !important;
+  }
+
+  &__mainTitle {
+    font-size: 24px;
+    margin-bottom: 24px;
+  }
+
+  &__body {
+    max-height: 60vh;
+    overflow-y: auto;
+    padding: 20 20px 12px;
   }
 }

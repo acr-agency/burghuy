@@ -28,11 +28,12 @@
   }
 
   &_content_left_ps {
+   max-width: 600px;
+    font-size: 20px;
     font-weight: 500;
-    font-size: 18px;
     line-height: 120%;
-    color: var(--about-text);
-    max-width: 600px;
+    color: var(--greyy);
+    letter-spacing: 1px;
   }
 
   &_content_left .butT3 {

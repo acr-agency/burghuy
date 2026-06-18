@@ -15,7 +15,8 @@
   /* чтобы текст был читабельный на светлых участках */
   position: relative;
   overflow: hidden;
-
+  background-size: 108% auto; /* чуть больше, чтобы можно было двигать */
+  animation: lineImgBgDrift 28s ease-in-out infinite alternate;
   &::before {
     content: "";
     position: absolute;
@@ -44,6 +45,19 @@
   }
 }
 
+
+
+@keyframes lineImgBgDrift {
+  0% {
+    background-position: 38% 42%;
+  }
+  50% {
+    background-position: 52% 48%;
+  }
+  100% {
+    background-position: 50% 50%;
+  }
+}
 /* ===== ADAPTIVE ===== */
 @media (max-width: 1024px) {
   .lineImg {

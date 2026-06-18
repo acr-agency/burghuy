@@ -4,10 +4,12 @@ import "./style.scss";
 
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
+import { A11y, Pagination } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/pagination";
+import { useReducedMotion, motion, Variants } from "framer-motion";
+import { Fade, Lift, Stagger } from "@/components/ui/Motion";
 
 const advantages = [
   {
@@ -54,45 +56,67 @@ const slides = [
 ];
 
 export default function Advantages() {
+  const reduceMotion = useReducedMotion();
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 14, scale: 0.99 },
+  show: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.5, ease: "easeOut" },
+  },
+};
+
   return (
     <section className="advantages">
       <div className="container">
-        {/* В макете это выглядит как “пилюля” */}
-        <div className="advantages__head">
-          <h2 className="h2">Преимущества</h2>
-        </div>
+        <Lift>
+          <div className="advantages__head">
+            <h2 className="h2">Преимущества</h2>
+          </div>
+        </Lift>
 
-        <div className="advantages__grid">
+        {/* GRID — каскадно */}
+        <Stagger delay={0.06} stagger={0.18} className="advantages__grid" once amount={0.25}>
           {advantages.map((item) => (
-            <div className="advantages__card" key={item.title}>
-              <div className="advantages__icon">
-                <Image
-                  src={item.icon}
-                  alt=""
-                  width={72}
-                  height={72}
-                  priority={false}
-                />
-              </div>
+            <motion.div
+              key={item.title}
+              className="advantages__card"
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.2 }}
+              whileHover={reduceMotion ? undefined : { y: -3 }}
+              transition={{ duration: 0.25 }}
+            >
+              <motion.div
+                className="advantages__icon"
+                whileHover={reduceMotion ? undefined : { rotate: -2, scale: 1.03 }}
+                transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+              >
+                <Image src={item.icon} alt="" width={72} height={72} priority={false} />
+              </motion.div>
 
               <h3 className="advantages__title">{item.title}</h3>
               <p className="advantages__text">{item.text}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </Stagger>
 
-        <div className="advantages__slider">
+        {/* SLIDER — мягкое появление */}
+        <Fade delay={0.08} className="advantages__slider">
           <Swiper
-            modules={[Pagination]}
+            modules={[Pagination, A11y]}
             slidesPerView={1}
             loop
             speed={600}
             pagination={{ clickable: true }}
+            className="advantagesSwiper"
           >
             {slides.map((s) => (
               <SwiperSlide key={s.src}>
                 <div className="advantages__slide">
-                  {/* Если не хочешь next/image — можно заменить на обычный <img /> */}
                   <Image
                     src={s.src}
                     alt={s.alt}
@@ -105,7 +129,7 @@ export default function Advantages() {
               </SwiperSlide>
             ))}
           </Swiper>
-        </div>
+        </Fade>
       </div>
     </section>
   );

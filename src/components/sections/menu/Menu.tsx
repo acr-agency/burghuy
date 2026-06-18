@@ -3,8 +3,12 @@
 import { SetStateAction, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import "./style.scss";
+import { useReducedMotion, motion, AnimatePresence } from "framer-motion";
+import { Lift, Stagger } from "@/components/ui/Motion";
 
 export default function Menu() {
+  const reduceMotion = useReducedMotion();
+
   const menuData = useMemo(
     () => [
       {
@@ -355,20 +359,69 @@ export default function Menu() {
       document.body.classList.remove("no-scroll");
     };
   }, [open]);
+const easeSoft: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
+const tileVariants = {
+  hidden: { opacity: 0, y: 20, scale: 0.985, filter: "blur(10px)" },
+  show: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: "blur(0px)",
+    transition: {
+      duration: 0.6,
+      ease: easeSoft,
+      delay: 0.06 + i * 0.08, // “волна”
+    },
+  }),
+};
+
+  // модалка
+  const backdrop = {
+    hidden: { opacity: 0 },
+    show: { opacity: 1, transition: { duration: 0.22 } },
+    exit: { opacity: 0, transition: { duration: 0.18 } },
+  };
+
+  const panel = {
+    hidden: reduceMotion
+      ? { opacity: 0 }
+      : { opacity: 0, y: 16, scale: 0.985, filter: "blur(10px)" },
+    show: reduceMotion
+      ? { opacity: 1 }
+      : {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        filter: "blur(0px)",
+        transition: { duration: 0.38, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+      },
+    exit: reduceMotion
+      ? { opacity: 0 }
+      : { opacity: 0, y: 10, scale: 0.99, filter: "blur(8px)", transition: { duration: 0.22 } },
+  };
   return (
     <section className="menu sect">
       <div className="container">
-        <h2 className="h2">Меню</h2>
+        <Lift>
+          <h2 className="h2">Меню</h2>
+        </Lift>
 
-        <div className="menu_content">
+        {/* ВАЖНО: Stagger оборачивает grid, но плитки остаются прямыми детьми grid */}
+        <Stagger delay={0.06} stagger={0.12} className="menu_content" once amount={0.25}>
           {menuData.map((cat) => (
-            <button
+            <motion.button
               key={cat.key}
               type="button"
               className={cat.tileClass}
               onClick={() => openModal(cat.key)}
               aria-label={`Открыть категорию: ${cat.title}`}
+              variants={tileVariants}
+              initial="hidden"
+              whileInView="show"
+              viewport={{ once: true, amount: 0.25 }}
+              whileHover={reduceMotion ? undefined : { y: -3 }}
+              whileTap={{ scale: 0.99 }}
             >
               <div className="tile_media">
                 <Image
@@ -381,62 +434,69 @@ export default function Menu() {
               </div>
 
               <div className="tile_label">{cat.title}</div>
-            </button>
+            </motion.button>
           ))}
-        </div>
+        </Stagger>
       </div>
 
-      {open && activeCategory && (
-        <div className="menu_modal" role="dialog" aria-modal="true">
-          <button
-            type="button"
-            className="menu_modal_backdrop"
-            onClick={closeModal}
-            aria-label="Закрыть"
-          />
+      <AnimatePresence>
+        {open && activeCategory && (
+          <motion.div
+            className="menu_modal"
+            role="dialog"
+            aria-modal="true"
+            variants={backdrop}
+            initial="hidden"
+            animate="show"
+            exit="exit"
+            onMouseDown={(e) => e.target === e.currentTarget && closeModal()}
+          >
+            {/* backdrop кликабельный */}
+            <button
+              type="button"
+              className="menu_modal_backdrop"
+              onClick={closeModal}
+              aria-label="Закрыть"
+            />
 
-          <div className="menu_modal_card">
-            <div className="menu_modal_head">
-              <div className="menu_modal_title">{activeCategory.title}</div>
-              {/* <Image
-                src={"/img/logo.png"}
-                alt={"Логотип Буржуй"}
-                width={109}
-                height={79}
-                priority
-              /> */}
-              <button
-                type="button"
-                className="menu_modal_close"
-                onClick={closeModal}
-                aria-label="Закрыть"
-              >
-                ✕
-              </button>
-            </div>
+            <motion.div
+              className="menu_modal_card"
+              variants={panel}
+              initial="hidden"
+              animate="show"
+              exit="exit"
+              onMouseDown={(e) => e.stopPropagation()}
+            >
+              <div className="menu_modal_head">
+                <div className="menu_modal_title">{activeCategory.title}</div>
 
-            <div className="menu_modal_body">
-              <div className="menu_table">
-                {/* <div className="menu_table_head">
-                  <div>Наименование</div> 
-                  <div>Выход</div>
-                  <div>Цена</div>
-                </div> */}
+                <button
+                  type="button"
+                  className="menu_modal_close"
+                  onClick={closeModal}
+                  aria-label="Закрыть"
+                >
+                  ✕
+                </button>
+              </div>
 
-                <div className="menu_table_rows">
-                  {activeCategory.rows.map((r, idx) => (
-                    <div className="menu_table_row" key={idx}>
-                      <div className="col_name">{r.name}</div>
-                      <div className="col_out">{r.out}</div>
-                      <div className="col_price">{r.price}</div>
-                    </div>
-                  ))}
+              <div className="menu_modal_body">
+                <div className="menu_table">
+                  <div className="menu_table_rows">
+                    {activeCategory.rows.map((r, idx) => (
+                      <div className="menu_table_row" key={idx}>
+                        <div className="col_name">{r.name}</div>
+                        <div className="col_out">{r.out}</div>
+                        <div className="col_price">{r.price}</div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

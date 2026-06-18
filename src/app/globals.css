@@ -18,6 +18,8 @@
     rgba(214, 190, 87, 1) 87%,
     rgba(197, 163, 63, 1) 100%
   );
+
+  --greyy:#626262;
   --text-gold: linear-gradient(90deg, #f7e579 0%, #df9339 100%);
   --color-1: #ead1a8;
   --color-2: #c2a16f;
@@ -89,7 +91,7 @@ button {
 
   border-radius: 42px;
 
-  color: #000;
+  color: #393939;
   font-size: 25px;
 
   padding: 15px 44px;
